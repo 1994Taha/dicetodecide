@@ -116,23 +116,102 @@ li {
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
 <script>
-const addBtn = document.getElementById("addBtn");
-const dice = document.getElementById("dice");
-const input = document.getElementById("optionInput");
-const list = document.getElementById("optionsList");
-const log = document.getElementById("resultLog");
-const winnerDiv = document.getElementById("winner");
+document.addEventListener("DOMContentLoaded", function() {
 
-let options = [];
-let currentTurn = 0;
-let totalTurns = 1;
-let results = {};
+  const addBtn = document.getElementById("addBtn");
+  const dice = document.getElementById("dice");
+  const input = document.getElementById("optionInput");
+  const list = document.getElementById("optionsList");
+  const log = document.getElementById("resultLog");
+  const winnerDiv = document.getElementById("winner");
 
-addBtn.addEventListener("click", () => {
-  if(input.value.trim()==="") return;
-  options.push(input.value.trim());
-  renderOptions();
-  input.value="";
+  let options = [];
+  let currentTurn = 0;
+  let totalTurns = 1;
+  let results = {};
+
+  addBtn.addEventListener("click", function() {
+    if(input.value.trim()==="") return;
+    options.push(input.value.trim());
+    renderOptions();
+    input.value="";
+  });
+
+  dice.addEventListener("click", rollDice);
+
+  function renderOptions() {
+    list.innerHTML="";
+    options.forEach(opt=>{
+      list.innerHTML+=`<li>${opt}</li>`;
+    });
+  }
+
+  function resetGame() {
+    currentTurn = 0;
+    results = {};
+    log.innerHTML = "";
+    winnerDiv.innerHTML = "";
+  }
+
+  function rollDice() {
+
+    if(options.length < 2){
+      alert("Add at least 2 options!");
+      return;
+    }
+
+    totalTurns = parseInt(document.querySelector('input[name="mode"]:checked').value);
+
+    if(currentTurn === 0){
+      resetGame();
+    }
+
+    if(currentTurn >= totalTurns){
+      return;
+    }
+
+    dice.classList.add("spin");
+
+    setTimeout(() => {
+
+      dice.classList.remove("spin");
+
+      const randomIndex = Math.floor(Math.random() * options.length);
+      const choice = options[randomIndex];
+
+      currentTurn++;
+      results[choice] = (results[choice] || 0) + 1;
+
+      log.innerHTML += `Turn ${currentTurn}: ${choice}<br>`;
+
+      if(currentTurn === totalTurns){
+        showFinalResult();
+      }
+
+    }, 600);
+  }
+
+  function showFinalResult(){
+    log.innerHTML += "<hr><strong>Final Count:</strong><br>";
+
+    for(const key in results){
+      log.innerHTML += `${key} → ${results[key]} vote(s)<br>`;
+    }
+
+    const winner = Object.keys(results)
+      .reduce((a,b)=> results[a] > results[b] ? a : b);
+
+    winnerDiv.innerHTML = `🏆 Winner: ${winner}`;
+
+    confetti({
+      particleCount:150,
+      spread:80,
+      origin:{y:0.6}
+    });
+  }
+
 });
+</script>
 
-dice.addEv
+</body>
+</html>
