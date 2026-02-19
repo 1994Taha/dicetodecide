@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DiceToDecide</title>
+
+<style>
+body {
+  margin:0;
+  font-family: 'Segoe UI', sans-serif;
+  background: linear-gradient(135deg, #1e3a8a, #2563eb, #22c55e);
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  min-height:100vh;
+  color:white;
+}
+
+.container {
+  background: rgba(255,255,255,0.1);
+  backdrop-filter: blur(15px);
+  padding:30px;
+  border-radius:20px;
+  width:95%;
+  max-width:500px;
+  text-align:center;
+  box-shadow:0 10px 30px rgba(0,0,0,0.3);
+}
+
+input {
+  padding:12px;
+  width:65%;
+  border:none;
+  border-radius:8px;
+  outline:none;
+}
+
+button {
+  padding:12px 18px;
+  border:none;
+  border-radius:8px;
+  cursor:pointer;
+  font-weight:bold;
+  margin:5px;
+  transition:0.3s;
+}
+
+.add-btn { background:#22c55e; color:white; }
+.roll-btn { background:#facc15; color:black; font-size:18px; }
+
+ul { list-style:none; padding:0; }
+
+li {
+  background:rgba(255,255,255,0.2);
+  padding:8px;
+  margin:5px 0;
+  border-radius:6px;
+}
+
+.dice {
+  font-size:60px;
+  margin:15px 0;
+  cursor:pointer;
+}
+
+.spin {
+  animation: spin 0.6s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.result-log {
+  text-align:left;
+  margin-top:15px;
+  max-height:150px;
+  overflow:auto;
+  background:rgba(0,0,0,0.2);
+  padding:10px;
+  border-radius:8px;
+}
+
+.winner {
+  font-size:22px;
+  margin-top:15px;
+  font-weight:bold;
+  color:#facc15;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+  <h1>🎲 DiceToDecide</h1>
+
+  <input type="text" id="optionInput" placeholder="Enter option">
+  <button class="add-btn" id="addBtn">+ Add</button>
+
+  <ul id="optionsList"></ul>
+
+  <p>Select Mode:</p>
+  <label><input type="radio" name="mode" value="1" checked> Best of 1</label>
+  <label><input type="radio" name="mode" value="3"> Best of 3</label>
+  <label><input type="radio" name="mode" value="5"> Best of 5</label>
+
+  <div class="dice" id="dice">🎲</div>
+
+  <div class="result-log" id="resultLog"></div>
+  <div class="winner" id="winner"></div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+<script>
+const addBtn = document.getElementById("addBtn");
+const dice = document.getElementById("dice");
+const input = document.getElementById("optionInput");
+const list = document.getElementById("optionsList");
+const log = document.getElementById("resultLog");
+const winnerDiv = document.getElementById("winner");
+
+let options = [];
+let currentTurn = 0;
+let totalTurns = 1;
+let results = {};
+
+addBtn.addEventListener("click", () => {
+  if(input.value.trim()==="") return;
+  options.push(input.value.trim());
+  renderOptions();
+  input.value="";
+});
+
+dice.addEv
